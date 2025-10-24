@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import Webcam from 'react-webcam'
 import axios from 'axios'
-import { Camera, RefreshCw, Send, Check, AlertCircle } from 'lucide-react'
+import { Camera, RefreshCw, Send, Check, AlertCircle, SwitchCamera } from 'lucide-react'
 import { Event } from '@/types'
 
 export default function EventPage({ params }: { params: { eventId: string } }) {
@@ -14,6 +14,7 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
   const [error, setError] = useState<string | null>(null)
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
 
   useEffect(() => {
     // Buscar informações do evento
@@ -43,6 +44,10 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
     setCapturedImage(null)
     setUploadSuccess(false)
     setError(null)
+  }
+
+  const toggleCamera = () => {
+    setFacingMode(prev => prev === 'user' ? 'environment' : 'user')
   }
 
   const uploadPhoto = async () => {
@@ -107,15 +112,24 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
           <div className="camera-container aspect-[4/3] bg-gray-900 relative">
             {!capturedImage ? (
               <>
+                {/* Switch Camera Button */}
+                <button
+                  onClick={toggleCamera}
+                  className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors backdrop-blur-sm"
+                  aria-label="Trocar câmera"
+                >
+                  <SwitchCamera className="w-6 h-6" />
+                </button>
                 <Webcam
                   audio={false}
                   ref={webcamRef}
                   screenshotFormat="image/jpeg"
+                  screenshotQuality={0.95}
                   className="w-full h-full object-cover"
                   videoConstraints={{
-                    facingMode: 'user',
-                    width: 1280,
-                    height: 720,
+                    facingMode: facingMode,
+                    width: { ideal: 2560 },
+                    height: { ideal: 1440 },
                   }}
                 />
                 {event?.frame_url && (
