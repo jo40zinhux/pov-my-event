@@ -109,7 +109,7 @@ export default function EventPage({ params }: { params: { eventId: string } }) {
 
         {/* Camera/Preview Container */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="camera-container aspect-[4/3] bg-gray-900 relative">
+          <div className="camera-container aspect-[3/4] bg-gray-900 relative">
             {!capturedImage ? (
               <>
                 {/* Switch Camera Button */}
