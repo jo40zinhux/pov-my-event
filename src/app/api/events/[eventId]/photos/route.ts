@@ -6,11 +6,17 @@ export async function GET(
   { params }: { params: { eventId: string } }
 ) {
   try {
-    const { data: photos, error } = await supabase
+    console.log(`Fetching photos for event: ${params.eventId}`)
+    
+    const { data: photos, error, count } = await supabase
       .from('photos')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('event_id', params.eventId)
       .order('created_at', { ascending: false })
+      .limit(1000) // Set a high limit to ensure we get all photos
+    
+    console.log(`Found ${count} photos in database for event ${params.eventId}`)
+    console.log(`Returning ${photos?.length || 0} photos in response`)
 
     if (error) {
       throw error
